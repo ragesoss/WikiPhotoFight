@@ -1,4 +1,5 @@
 require 'mediawiki_api'
+require 'open-uri'
 
 #= This class is for getting data directly from the Wikipedia API.
 class Wiki
@@ -14,6 +15,17 @@ class Wiki
   def self.get_page_content(page_title, opts = {})
     response = wikipedia('get_wikitext', page_title, opts)
     response.status == 200 ? response.body : nil
+  end
+
+  def self.save_commons_image(filename)
+    opts = { site: 'commons.wikimedia.org' }
+    query = { prop: 'imageinfo',
+              iiprop: 'url',
+              iiurlheight: 1000,
+              titles: filename }
+    response = query(query, opts)
+    url = response.data['pages'].values.first['imageinfo'].first['thumburl']
+    File.write filename, open(url, &:read)
   end
 
   ###################

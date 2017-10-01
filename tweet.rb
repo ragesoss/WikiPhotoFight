@@ -20,8 +20,14 @@ class Tweet
   ###############
   # Twitter API #
   ###############
-  def initialize(tweet)
-    TwitterClient.new.client.update(tweet)
+  def initialize(tweet, filename: nil)
+    if filename
+      Wiki.save_commons_image filename
+      TwitterClient.new.client.update_with_media(tweet, File.new(filename))
+      File.delete filename
+    else
+      TwitterClient.new.client.update(tweet)
+    end
   end
 
   ###########
