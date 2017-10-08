@@ -39,7 +39,7 @@ class Article < ActiveRecord::Base
     self.tweeted = true
     save
     'tweeted'
-  rescue NoImageError => e
+  rescue StandardError => e
     self.failed_tweet_at = Time.now
     save
     raise e
@@ -52,7 +52,7 @@ class Article < ActiveRecord::Base
   def tweet_text
     @image = FindImages.first(self)
     raise NoImageError unless @image.present?
-    "#{title} on Wikipedia is illustrated with this. Can you do better? #{url}"
+    "#{title} on Wikipedia is illustrated with this. #{hashtag} Can you do better? #{url}"
   end
 
   def commons_link(image)
