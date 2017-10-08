@@ -25,7 +25,8 @@ class Wiki
               titles: filename }
     response = query(query, opts)
     url = response.data['pages'].values.first['imageinfo'].first['thumburl']
-    File.write filename, open(url, &:read)
+
+    File.write filename, open(url).read
   end
 
   ###################

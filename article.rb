@@ -28,7 +28,7 @@ class Article < ActiveRecord::Base
   end
 
   def self.tweetable
-    where(tweeted: nil)
+    where(tweeted: nil, failed_tweet_at: nil)
   end
 
   ####################
@@ -38,6 +38,11 @@ class Article < ActiveRecord::Base
     Tweet.new(tweet_text, filename: @image)
     self.tweeted = true
     save
+    'tweeted'
+  rescue NoImageError => e
+    self.failed_tweet_at = Time.now
+    save
+    raise e
   end
 
   def screenshot_path
@@ -47,7 +52,7 @@ class Article < ActiveRecord::Base
   def tweet_text
     @image = FindImages.first(self)
     raise NoImageError unless @image.present?
-    "#{title} has one illustration: #{commons_link(@image)}"
+    "#{title} on Wikipedia is illustrated with this. Can you do better? #{url}"
   end
 
   def commons_link(image)
@@ -77,8 +82,8 @@ class Article < ActiveRecord::Base
 
   def edit_url
     # Includes the summary preload #FixmeBot, so that edits can be tracked:
-    # http://tools.wmflabs.org/hashtags/search/fixmebot
-    "https://en.wikipedia.org/wiki/#{escaped_title}?veaction=edit&summary=%23FixmeBot"
+    # http://tools.wmflabs.org/hashtags/search/wikiphotofight
+    "https://en.wikipedia.org/wiki/#{escaped_title}?veaction=edit&summary=%23WikiPhotoFight"
   end
 
   def make_screenshot

@@ -15,6 +15,7 @@ class CreateArticles < ActiveRecord::Migration[5.1]
       t.timestamps null: false
       t.integer :image_count
       t.string :first_image_url
+      t.timestamp :failed_tweet_at
     end
   end
 end
