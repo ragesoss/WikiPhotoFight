@@ -14,7 +14,7 @@ class Tweet
       article = Article.first_tweetable
     end
     article.tweet
-    Rails.logger.info "Tweeted #{article.title}"
+    puts "Tweeted #{article.title}"
   end
 
   ###############
